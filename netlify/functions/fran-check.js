@@ -27,7 +27,9 @@ export async function handler(event) {
       return jsonResponse(200, result);
     } catch (error) {
       return jsonResponse(200, {
+        exists: false,
         found: false,
+        definitionFound: false,
         word,
         message: error.message || "Unknown error",
         lookupUrl: franLookupUrl(word)
@@ -102,10 +104,13 @@ async function checkFran(word) {
 
 async function defineFromFran(word) {
   const { html, lookupUrl } = await fetchFranHtml(word);
+  const exists = !hasNoResults(html);
 
-  if (hasNoResults(html)) {
+  if (!exists) {
     return {
+      exists: false,
       found: false,
+      definitionFound: false,
       word,
       message: "FRAN ni vrnil zadetka za to besedo.",
       lookupUrl
@@ -117,15 +122,20 @@ async function defineFromFran(word) {
 
   if (!best) {
     return {
-      found: false,
+      exists: true,
+      found: true,
+      definitionFound: false,
       word,
-      message: "Pomena ni bilo mogoče zanesljivo razbrati. Uporabi povezavo Odpri v FRAN.",
+      meaning: "",
+      message: "FRAN je našel besedo, vendar pomena ni bilo mogoče zanesljivo izluščiti. Beseda je kljub temu veljavna.",
       lookupUrl
     };
   }
 
   return {
+    exists: true,
     found: true,
+    definitionFound: true,
     word,
     meaning: best,
     lookupUrl
