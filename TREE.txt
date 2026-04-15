@@ -1,0 +1,8 @@
+scrabble_fran_meaning_full/
+├── index.html
+├── netlify.toml
+├── README.txt
+├── TREE.txt
+└── netlify/
+    └── functions/
+        └── fran-check.js
