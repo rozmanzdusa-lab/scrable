@@ -7,45 +7,84 @@
   <style>
     :root{--bg:#f5f1e8;--panel:#fffaf2;--line:#d5c7ae;--text:#2b2418;--muted:#6e6659;--tile:#f3d79a;--tile-edge:#c29a4a;--cell:#f8f2e7;--tw:#f26b6b;--dw:#f4a261;--tl:#5aa9e6;--dl:#8fd3ff;--center:#d98cf0;--ok:#3a7d44;--warn:#b85c38}
     *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-    .app{display:grid;grid-template-columns:390px 1fr;gap:18px;padding:18px;min-height:100vh}
-    .panel,.board-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
-    h1,h2{margin:0 0 10px 0}p{margin:8px 0;line-height:1.45}.muted{color:var(--muted)}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-    .scorebox{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
-    .scorebox.active{outline:3px solid rgba(58,125,68,.18);border-color:var(--ok)}
-    .big{font-size:28px;font-weight:700;margin-top:4px}
-    button{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:14px;color:var(--text)}
-    button:hover{background:#faf6ee}button.primary{background:var(--ok);color:#fff;border-color:var(--ok)}button.warn{background:var(--warn);color:#fff;border-color:var(--warn)}button:disabled{opacity:.5;cursor:not-allowed}
-    .board{display:grid;grid-template-columns:repeat(15,42px);grid-template-rows:repeat(15,42px);gap:2px;width:max-content;background:var(--line);border:2px solid var(--line);margin-bottom:18px}
-    .cell{width:42px;height:42px;background:var(--cell);position:relative;display:flex;align-items:center;justify-content:center;font-size:11px;user-select:none;cursor:pointer}
-    .cell .bonus{text-align:center;font-weight:700;line-height:1.05;color:rgba(0,0,0,.6);font-size:10px;padding:3px}
-    .cell.preview{outline:3px solid rgba(58,125,68,.4);z-index:1}.cell.invalid-preview{outline:3px solid rgba(184,92,56,.55)}
-    .cell.tw{background:var(--tw)}.cell.dw{background:var(--dw)}.cell.tl{background:var(--tl)}.cell.dl{background:var(--dl)}.cell.center{background:var(--center)}
-    .tile{width:34px;height:34px;background:var(--tile);border:1px solid var(--tile-edge);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;position:relative}
-    .tile small{position:absolute;right:4px;bottom:2px;font-size:10px;font-weight:700}.tile.selected{outline:3px solid rgba(58,125,68,.45);transform:translateY(-1px)}.tile.blank{background:#efe8dc}
-    .rack{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:10px;border:1px dashed var(--line);border-radius:12px;background:#fff;margin-top:8px;min-height:58px}
-    .rack-slot{min-height:38px;display:flex;align-items:center;justify-content:center}
-    .status,.check-box{min-height:52px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-top:10px;line-height:1.35}
-    .history{max-height:240px;overflow:auto;padding-right:4px;margin-top:10px}.history-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px}
-    .ok{color:var(--ok);font-weight:700}.bad{color:var(--warn);font-weight:700}.hint{font-size:12px;color:var(--muted);margin-top:8px}
-    @media (max-width:1120px){.app{grid-template-columns:1fr}}
+    .app{display:grid;grid-template-columns:390px minmax(0,1fr);grid-template-areas:'top board' 'bottom board';gap:18px;padding:18px;min-height:100vh;align-items:start}
+.panel,.board-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.top-panel{grid-area:top}
+.bottom-panel{grid-area:bottom}
+.board-wrap{grid-area:board;overflow:auto}
+.top-header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.title-wrap{min-width:0;flex:1}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0;min-width:210px}
+.scorebox{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff}
+.scorebox.active{outline:3px solid rgba(58,125,68,.18);border-color:var(--ok)}
+.big{font-size:22px;font-weight:700;margin-top:2px}
+button{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:14px;color:var(--text)}
+button:hover{background:#faf6ee} button.primary{background:var(--ok);color:#fff;border-color:var(--ok)} button.warn{background:var(--warn);color:#fff;border-color:var(--warn)} button:disabled{opacity:.5;cursor:not-allowed}
+.board{display:grid;grid-template-columns:repeat(15,42px);grid-template-rows:repeat(15,42px);gap:2px;width:max-content;background:var(--line);border:2px solid var(--line);margin:0 auto}
+.cell{width:42px;height:42px;background:var(--cell);position:relative;display:flex;align-items:center;justify-content:center;font-size:11px;user-select:none;cursor:pointer}
+.cell .bonus{text-align:center;font-weight:700;line-height:1.05;color:rgba(0,0,0,.6);font-size:10px;padding:3px}
+.cell.preview{outline:3px solid rgba(58,125,68,.4);z-index:1}.cell.invalid-preview{outline:3px solid rgba(184,92,56,.55)}
+.cell.tw{background:var(--tw)} .cell.dw{background:var(--dw)} .cell.tl{background:var(--tl)} .cell.dl{background:var(--dl)} .cell.center{background:var(--center)}
+.tile{width:34px;height:34px;background:var(--tile);border:1px solid var(--tile-edge);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;position:relative}
+.tile small{position:absolute;right:4px;bottom:2px;font-size:10px;font-weight:700}.tile.selected{outline:3px solid rgba(58,125,68,.45);transform:translateY(-1px)}.tile.blank{background:#efe8dc}
+.rack{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;padding:10px;border:1px dashed var(--line);border-radius:12px;background:#fff;margin-top:8px;min-height:58px}
+.rack-slot{min-height:38px;display:flex;align-items:center;justify-content:center}
+.status,.check-box{min-height:52px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-top:10px;line-height:1.35}
+.history{max-height:240px;overflow:auto;padding-right:4px;margin-top:10px}.history-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--warn);font-weight:700}.hint{font-size:12px;color:var(--muted);margin-top:8px}
+@media (max-width:1120px){
+  .app{grid-template-columns:1fr;grid-template-areas:'top' 'board' 'bottom';padding:10px;gap:10px}
+  .top-header{flex-direction:column}
+  .scores{width:100%;min-width:0}
+  .scorebox{padding:6px 8px}
+  .big{font-size:18px}
+  .panel,.board-wrap{padding:10px}
+  .board-wrap{overflow:auto}
+  .board{grid-template-columns:repeat(15,34px);grid-template-rows:repeat(15,34px)}
+  .cell{width:34px;height:34px;font-size:9px}
+  .cell .bonus{font-size:8px;padding:2px}
+  .tile{width:28px;height:28px;font-size:15px}
+  .tile small{font-size:8px;right:3px;bottom:1px}
+  .rack{gap:6px;padding:8px;position:sticky;top:0;z-index:5}
+  .action-row{gap:6px}
+  button{padding:8px 10px;font-size:13px}
+}
+@media (max-width:700px){
+  .board{grid-template-columns:repeat(15,30px);grid-template-rows:repeat(15,30px)}
+  .cell{width:30px;height:30px}
+  .tile{width:24px;height:24px;font-size:13px}
+}
   </style>
 </head>
 <body>
   <div class="app">
-    <aside class="panel">
-      <h1>Skrebl za 2 igralca</h1>
-      <p class="muted">Preverjanje besed uporablja FRAN prek backend funkcije.</p>
-      <div class="scores" id="scores"></div>
+    <section class="top-panel panel">
+      <div class="top-header">
+        <div class="title-wrap">
+          <h1>Skrebl za 2 igralca</h1>
+          <p class="muted">Preverjanje besed uporablja FRAN prek backend funkcije.</p>
+        </div>
+        <div class="scores" id="scores"></div>
+      </div>
+
       <div class="status" id="status"></div>
-      <div style="margin-top:12px;"><h2>Polica aktivnega igralca</h2><div class="rack" id="rack"></div></div>
-      <div class="row" style="margin-top:12px;">
+
+      <div class="rack-section" style="margin-top:12px;">
+        <h2>Polica aktivnega igralca</h2>
+        <div class="rack" id="rack"></div>
+      </div>
+
+      <div class="row action-row" style="margin-top:12px;">
         <button id="swapBtn">Zamenjaj vse črke</button>
         <button id="recallBtn">Vrni potezo</button>
         <button class="primary" id="playBtn">Potrdi potezo</button>
         <button class="warn" id="passBtn">Preskoči</button>
       </div>
+    </section>
+
+    <main class="board-wrap"><div class="board" id="board"></div></main>
+
+    <aside class="bottom-panel panel">
       <div class="check-box">
         <strong>FRAN preverjanje</strong>
         <div id="checkInfo" class="hint">Pripravljeno.</div>
@@ -66,11 +105,14 @@
           <input id="meaningInput" type="text" placeholder="Vpiši besedo" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;" />
           <button id="meaningBtn">Preveri pomen</button>
         </div>
-        <div id="meaningResult" class="hint">Vpiši besedo ali jo izberi iz seznama in klikni gumb. Če FRAN vrne pomen, se izpiše spodaj.</div>
+        <div id="meaningResult" class="hint">Vpiši besedo ali jo izberi iz seznama in klikni gumb. Če FRAN ne vrne zanesljivega pomena, dobiš povezavo za neposreden ogled v FRAN.</div>
       </div>
-      <div style="margin-top:16px;"><h2>Zgodovina</h2><div class="history" id="history"></div></div>
+
+      <div style="margin-top:16px;">
+        <h2>Zgodovina</h2>
+        <div class="history" id="history"></div>
+      </div>
     </aside>
-    <main class="board-wrap"><div class="board" id="board"></div></main>
   </div>
 
 <script>
@@ -363,8 +405,21 @@ async function handleMeaningLookup(){
 
   try{
     const data = await fetchMeaningFromFran(word);
+
+    if(data.exists && !data.definitionFound){
+      meaningResultEl.innerHTML =
+        `<div><strong>${escapeHtml(data.word || word)}</strong></div>` +
+        `<div style="margin-top:6px;"><span class="ok">Beseda je veljavna.</span> ` +
+        `${data.message ? escapeHtml(data.message) : 'Pomen ni bil zanesljivo izluščen.'}</div>` +
+        `${data.lookupUrl ? `<div style="margin-top:6px;"><a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a></div>` : ''}`;
+      return;
+    }
+
     if(!data.found){
-      meaningResultEl.innerHTML = `<span class="bad">Pomena ni bilo mogoče najti.</span> ${data.message ? escapeHtml(data.message) : ''}`;
+      meaningResultEl.innerHTML =
+        `<span class="bad">Beseda ni potrjena v FRAN.</span> ` +
+        `${data.message ? escapeHtml(data.message) : ''}` +
+        `${data.lookupUrl ? ` <a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a>` : ''}`;
       return;
     }
 
