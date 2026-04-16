@@ -3,448 +3,299 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skrebl za 2 igralca, FRAN preverjanje</title>
+  <title>Skrebl za 2 igralca</title>
   <style>
-    :root{--bg:#f5f1e8;--panel:#fffaf2;--line:#d5c7ae;--text:#2b2418;--muted:#6e6659;--tile:#f3d79a;--tile-edge:#c29a4a;--cell:#f8f2e7;--tw:#f26b6b;--dw:#f4a261;--tl:#5aa9e6;--dl:#8fd3ff;--center:#d98cf0;--ok:#3a7d44;--warn:#b85c38}
-    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-    .app{display:grid;grid-template-columns:390px minmax(0,1fr);grid-template-areas:'top board' 'bottom board';gap:18px;padding:18px;min-height:100vh;align-items:start}
-.panel,.board-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
-.top-panel{grid-area:top}
-.bottom-panel{grid-area:bottom}
-.board-wrap{grid-area:board;overflow:auto}
-.top-header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
-.title-wrap{min-width:0;flex:1}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0;min-width:210px}
-.scorebox{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff}
-.scorebox.active{outline:3px solid rgba(58,125,68,.18);border-color:var(--ok)}
-.big{font-size:22px;font-weight:700;margin-top:2px}
-button{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:14px;color:var(--text)}
-button:hover{background:#faf6ee} button.primary{background:var(--ok);color:#fff;border-color:var(--ok)} button.warn{background:var(--warn);color:#fff;border-color:var(--warn)} button:disabled{opacity:.5;cursor:not-allowed}
-.board{display:grid;grid-template-columns:repeat(15,42px);grid-template-rows:repeat(15,42px);gap:2px;width:max-content;background:var(--line);border:2px solid var(--line);margin:0 auto}
-.cell{width:42px;height:42px;background:var(--cell);position:relative;display:flex;align-items:center;justify-content:center;font-size:11px;user-select:none;cursor:pointer}
-.cell .bonus{text-align:center;font-weight:700;line-height:1.05;color:rgba(0,0,0,.6);font-size:10px;padding:3px}
-.cell.preview{outline:3px solid rgba(58,125,68,.4);z-index:1}.cell.invalid-preview{outline:3px solid rgba(184,92,56,.55)}
-.cell.tw{background:var(--tw)} .cell.dw{background:var(--dw)} .cell.tl{background:var(--tl)} .cell.dl{background:var(--dl)} .cell.center{background:var(--center)}
-.tile{width:34px;height:34px;background:var(--tile);border:1px solid var(--tile-edge);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;position:relative}
-.tile small{position:absolute;right:4px;bottom:2px;font-size:10px;font-weight:700}.tile.selected{outline:3px solid rgba(58,125,68,.45);transform:translateY(-1px)}.tile.blank{background:#efe8dc}
-.rack{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;padding:10px;border:1px dashed var(--line);border-radius:12px;background:#fff;margin-top:8px;min-height:58px}
-.rack-slot{min-height:38px;display:flex;align-items:center;justify-content:center}
-.status,.check-box{min-height:52px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-top:10px;line-height:1.35}
-.history{max-height:240px;overflow:auto;padding-right:4px;margin-top:10px}.history-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px}
-.ok{color:var(--ok);font-weight:700}.bad{color:var(--warn);font-weight:700}.hint{font-size:12px;color:var(--muted);margin-top:8px}
-@media (max-width:1120px){
-  .app{grid-template-columns:1fr;grid-template-areas:'top' 'board' 'bottom';padding:10px;gap:10px}
-  .top-header{flex-direction:column}
-  .scores{width:100%;min-width:0}
-  .scorebox{padding:6px 8px}
-  .big{font-size:18px}
-  .panel,.board-wrap{padding:10px}
-  .board-wrap{overflow:auto}
-  .board{grid-template-columns:repeat(15,34px);grid-template-rows:repeat(15,34px)}
-  .cell{width:34px;height:34px;font-size:9px}
-  .cell .bonus{font-size:8px;padding:2px}
-  .tile{width:28px;height:28px;font-size:15px}
-  .tile small{font-size:8px;right:3px;bottom:1px}
-  .rack{gap:6px;padding:8px;position:sticky;top:0;z-index:5}
-  .action-row{gap:6px}
-  button{padding:8px 10px;font-size:13px}
-}
-@media (max-width:700px){
-  .board{grid-template-columns:repeat(15,30px);grid-template-rows:repeat(15,30px)}
-  .cell{width:30px;height:30px}
-  .tile{width:24px;height:24px;font-size:13px}
-}
+    :root{
+      --bg:#f5f1e8;--panel:#fffaf2;--line:#d5c7ae;--text:#2b2418;--muted:#6e6659;
+      --tile:#f3d79a;--tile-edge:#c29a4a;--cell:#f8f2e7;--tw:#f26b6b;--dw:#f4a261;
+      --tl:#5aa9e6;--dl:#8fd3ff;--center:#d98cf0;--ok:#2f7b3e;--warn:#b85c38;--active:#ffe9a8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .app{display:grid;grid-template-columns:320px 1fr;gap:14px;padding:14px;min-height:100vh}
+    .panel,.board-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+    .board-wrap{display:flex;flex-direction:column}
+    h1,h2{margin:0 0 8px 0}
+    h1{font-size:22px}
+    h2{font-size:17px}
+    p{margin:6px 0;line-height:1.35}
+    .muted{color:var(--muted)}
+    .compact{font-size:12px}
+    .scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+    .scorebox{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+    .scorebox.active{background:var(--active);border-color:#d7b24b;outline:2px solid rgba(215,178,75,.28)}
+    .name-line{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .big{font-size:24px;font-weight:700;margin-top:2px}
+    .timer{font-size:16px;font-weight:700;padding:4px 8px;border-radius:8px;border:1px solid var(--line);background:#fff}
+    .timer.warn{color:#a13318;border-color:#d98b6b;background:#fff3ee}
+    .status,.check-box,.meaning-box{padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-top:8px;line-height:1.35}
+    .rack{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:8px;border:1px dashed var(--line);border-radius:12px;background:#fff;margin-top:8px;min-height:54px}
+    .rack-slot{min-height:36px;display:flex;align-items:center;justify-content:center}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    button{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;font-size:14px;color:var(--text)}
+    button:hover{background:#faf6ee}
+    button.primary{background:var(--ok);color:white;border-color:var(--ok)}
+    button.warn{background:var(--warn);color:white;border-color:var(--warn)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    input,select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text)}
+    .board{display:grid;grid-template-columns:repeat(15,42px);grid-template-rows:repeat(15,42px);gap:2px;width:max-content;background:var(--line);border:2px solid var(--line);margin:0 auto}
+    .cell{width:42px;height:42px;background:var(--cell);position:relative;display:flex;align-items:center;justify-content:center;font-size:11px;user-select:none;cursor:pointer}
+    .cell .bonus{text-align:center;font-weight:700;line-height:1.05;color:rgba(0,0,0,.58);font-size:10px;padding:3px}
+    .cell.preview{outline:3px solid rgba(47,123,62,.45);z-index:1}
+    .cell.invalid-preview{outline:3px solid rgba(184,92,56,.58)}
+    .cell.tw{background:var(--tw)} .cell.dw{background:var(--dw)} .cell.tl{background:var(--tl)} .cell.dl{background:var(--dl)} .cell.center{background:var(--center)}
+    .tile{width:34px;height:34px;background:var(--tile);border:1px solid var(--tile-edge);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;position:relative}
+    .tile small{position:absolute;right:4px;bottom:2px;font-size:10px;font-weight:700}
+    .tile.selected{outline:3px solid rgba(47,123,62,.45);transform:translateY(-1px)}
+    .tile.blank{background:#efe8dc}
+    .history{max-height:220px;overflow:auto;padding-right:4px;margin-top:8px}
+    .history-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px}
+    .ok{color:var(--ok);font-weight:700}.bad{color:var(--warn);font-weight:700}.hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .section-spacer{margin-top:10px}
+    @media (max-width:1120px){
+      .app{grid-template-columns:1fr;padding:10px;gap:10px}
+      .panel{padding:10px}.board-wrap{padding:10px}
+    }
+    @media (max-width:820px){
+      h1{font-size:20px}.app{padding:8px}.board-wrap,.panel{padding:8px}
+      .board{grid-template-columns:repeat(15,minmax(20px,1fr));grid-template-rows:repeat(15,minmax(20px,1fr));width:100%}
+      .cell{width:auto;height:auto;aspect-ratio:1/1}.tile{width:88%;height:88%;font-size:16px}
+      .big{font-size:21px}.rack{position:sticky;top:0;z-index:3;background:#fffdf8}.scores{gap:6px}
+      button{padding:8px 10px;font-size:13px}
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <section class="top-panel panel">
-      <div class="top-header">
-        <div class="title-wrap">
-          <h1>Skrebl za 2 igralca</h1>
-          <p class="muted">Preverjanje besed uporablja FRAN prek backend funkcije.</p>
-        </div>
+    <aside class="panel">
+      <div class="top-block">
+        <h1>Skrebl za 2 igralca</h1>
         <div class="scores" id="scores"></div>
-      </div>
-
-      <div class="status" id="status"></div>
-
-      <div class="rack-section" style="margin-top:12px;">
-        <h2>Polica aktivnega igralca</h2>
+        <div class="status" id="status"></div>
         <div class="rack" id="rack"></div>
+        <div class="row section-spacer">
+          <button class="primary" id="playBtn">Potrdi potezo</button>
+          <button id="passBtn" class="warn">Preskoči</button>
+          <button id="swapBtn">Zamenjaj črke</button>
+        </div>
       </div>
+    </aside>
 
-      <div class="row action-row" style="margin-top:12px;">
-        <button id="swapBtn">Zamenjaj vse črke</button>
-        <button id="recallBtn">Vrni potezo</button>
-        <button class="primary" id="playBtn">Potrdi potezo</button>
-        <button class="warn" id="passBtn">Preskoči</button>
-      </div>
-    </section>
+    <main class="board-wrap">
+      <div class="board" id="board"></div>
 
-    <main class="board-wrap"><div class="board" id="board"></div></main>
-
-    <aside class="bottom-panel panel">
-      <div class="check-box">
-        <strong>FRAN preverjanje</strong>
+      <div class="check-box section-spacer">
+        <strong>Preverjene besede</strong>
         <div id="checkInfo" class="hint">Pripravljeno.</div>
         <div id="checkedWords" class="hint"></div>
-        <div class="hint">Frontend kliče endpoint <code>/.netlify/functions/fran-check</code>.</div>
       </div>
 
-      <div class="check-box">
+      <div class="meaning-box section-spacer">
         <strong>Pomen besede</strong>
-        <div class="hint" style="margin-top:6px;">Izberi eno od prej preverjenih besed ali vpiši novo.</div>
+        <div class="hint">Izberi eno od prej preverjenih besed ali vpiši novo.</div>
         <div class="row" style="margin-top:8px;">
-          <select id="checkedWordsSelect" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;">
+          <select id="checkedWordsSelect" style="flex:1;min-width:160px;">
             <option value="">Izberi prej preverjeno besedo</option>
           </select>
           <button id="useCheckedWordBtn">Uporabi</button>
         </div>
         <div class="row" style="margin-top:8px;">
-          <input id="meaningInput" type="text" placeholder="Vpiši besedo" style="flex:1;min-width:140px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;" />
+          <input id="meaningInput" type="text" placeholder="Vpiši besedo" style="flex:1;min-width:160px;" />
           <button id="meaningBtn">Preveri pomen</button>
         </div>
-        <div id="meaningResult" class="hint">Vpiši besedo ali jo izberi iz seznama in klikni gumb. Če FRAN ne vrne zanesljivega pomena, dobiš povezavo za neposreden ogled v FRAN.</div>
+        <div id="meaningResult" class="hint">Vpiši besedo ali jo izberi iz seznama in klikni gumb.</div>
       </div>
 
-      <div style="margin-top:16px;">
+      <div class="section-spacer">
         <h2>Zgodovina</h2>
         <div class="history" id="history"></div>
       </div>
-    </aside>
+    </main>
   </div>
 
 <script>
-const SIZE=15,CENTER=7,CHECK_ENDPOINT='/.netlify/functions/fran-check';
+const SIZE=15,CENTER=7,CHECK_ENDPOINT='/.netlify/functions/fran-check',TURN_SECONDS=120;
 const DISTRIBUTION=[...Array(10).fill(['A',1]),...Array(2).fill(['B',4]),['C',4],['Č',4],...Array(4).fill(['D',3]),...Array(11).fill(['E',1]),['F',8],...Array(2).fill(['G',3]),['H',4],...Array(9).fill(['I',1]),...Array(4).fill(['J',1]),...Array(3).fill(['K',2]),...Array(4).fill(['L',1]),...Array(2).fill(['M',2]),...Array(7).fill(['N',1]),...Array(9).fill(['O',1]),...Array(2).fill(['P',2]),...Array(5).fill(['R',1]),...Array(5).fill(['S',1]),['Š',5],...Array(4).fill(['T',1]),...Array(2).fill(['U',1]),...Array(4).fill(['V',2]),...Array(2).fill(['Z',3]),['Ž',8],['?',0],['?',0]];
+
 const BONUS_LAYOUT=createBonusLayout();
-let bag=[],board=[],players=[],currentPlayer=0,selectedRackIndex=null,turnPlacements=[],history=[],passCount=0,gameOver=false,invalidPreviewCells=[],lastCheckedWords=[];
+let bag=[],board=[],players=[],currentPlayer=0,selectedRackIndex=null,turnPlacements=[],history=[],gameOver=false,invalidPreviewCells=[],lastCheckedWords=[],turnTimerId=null,timeLeft=TURN_SECONDS,lastMoveMessage='';
 const boardEl=document.getElementById('board'),rackEl=document.getElementById('rack'),scoresEl=document.getElementById('scores'),statusEl=document.getElementById('status'),historyEl=document.getElementById('history'),checkInfoEl=document.getElementById('checkInfo'),checkedWordsEl=document.getElementById('checkedWords'),checkedWordsSelectEl=document.getElementById('checkedWordsSelect'),useCheckedWordBtnEl=document.getElementById('useCheckedWordBtn'),meaningInputEl=document.getElementById('meaningInput'),meaningBtnEl=document.getElementById('meaningBtn'),meaningResultEl=document.getElementById('meaningResult');
+
 function createBonusLayout(){const grid=Array.from({length:SIZE},()=>Array.from({length:SIZE},()=>''));const set=(coords,value)=>coords.forEach(([r,c])=>grid[r][c]=value);set([[0,0],[0,7],[0,14],[7,0],[7,14],[14,0],[14,7],[14,14]],'TW');set([[1,1],[2,2],[3,3],[4,4],[10,10],[11,11],[12,12],[13,13],[1,13],[2,12],[3,11],[4,10],[10,4],[11,3],[12,2],[13,1]],'DW');set([[1,5],[1,9],[5,1],[5,5],[5,9],[5,13],[9,1],[9,5],[9,9],[9,13],[13,5],[13,9]],'TL');set([[0,3],[0,11],[2,6],[2,8],[3,0],[3,7],[3,14],[6,2],[6,6],[6,8],[6,12],[7,3],[7,11],[8,2],[8,6],[8,8],[8,12],[11,0],[11,7],[11,14],[12,6],[12,8],[14,3],[14,11]],'DL');grid[CENTER][CENTER]='CENTER';return grid}
 function freshBag(){return shuffle(DISTRIBUTION.map(([letter,points],i)=>({id:`${letter}-${points}-${i}-${Math.random().toString(36).slice(2,7)}`,letter,points})))}
 function shuffle(arr){const copy=[...arr];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
-function initGame(){bag=freshBag();board=Array.from({length:SIZE},(_,r)=>Array.from({length:SIZE},(_,c)=>({row:r,col:c,bonus:BONUS_LAYOUT[r][c],tile:null,locked:false,preview:false})));players=[{name:'Igralec 1',score:0,rack:[]},{name:'Igralec 2',score:0,rack:[]}];drawTiles(0,7);drawTiles(1,7);currentPlayer=0;selectedRackIndex=null;turnPlacements=[];history=[];passCount=0;gameOver=false;invalidPreviewCells=[];renderAll();setStatus('Na potezi je Igralec 1. Izberi črko in klikni na ploščo.')}
+
+function initGame(){
+  bag=freshBag();
+  board=Array.from({length:SIZE},(_,r)=>Array.from({length:SIZE},(_,c)=>({row:r,col:c,bonus:BONUS_LAYOUT[r][c],tile:null,locked:false,preview:false})));
+  players=[
+    {name:'Igralec 1',score:0,rack:[],forfeitStreak:0},
+    {name:'Igralec 2',score:0,rack:[],forfeitStreak:0}
+  ];
+  drawTiles(0,7);drawTiles(1,7);
+  currentPlayer=0;selectedRackIndex=null;turnPlacements=[];history=[];gameOver=false;invalidPreviewCells=[];lastCheckedWords=[];lastMoveMessage='';
+  renderAll();startTurnTimer();setStatus('Na potezi je Igralec 1.');
+}
+
 function drawTiles(playerIndex,count){while(players[playerIndex].rack.length<7&&count>0&&bag.length>0){players[playerIndex].rack.push(bag.pop());count--}}
-function renderAll(){renderBoard();renderRack();renderScores();renderHistory();document.getElementById('swapBtn').disabled=gameOver||bag.length<players[currentPlayer].rack.length;document.getElementById('playBtn').disabled=gameOver;document.getElementById('passBtn').disabled=gameOver;document.getElementById('recallBtn').disabled=gameOver||turnPlacements.length===0}
-function renderScores(){scoresEl.innerHTML='';players.forEach((p,idx)=>{const div=document.createElement('div');div.className='scorebox'+(idx===currentPlayer&&!gameOver?' active':'');div.innerHTML=`<div>${p.name}</div><div class="big">${p.score}</div><div class="muted">Črke na polici: ${p.rack.length}</div>`;scoresEl.appendChild(div)})}
+
+function renderAll(){
+  renderBoard();
+  renderRack();
+  renderScores();
+  renderHistory();
+  document.getElementById('swapBtn').disabled = gameOver || bag.length < players[currentPlayer].rack.length;
+  document.getElementById('playBtn').disabled = gameOver;
+  document.getElementById('passBtn').disabled = gameOver;
+}
+
+function renderScores(){
+  scoresEl.innerHTML='';
+  players.forEach((p,idx)=>{
+    const div=document.createElement('div');
+    div.className='scorebox'+(idx===currentPlayer&&!gameOver?' active':'');
+    const timerClass = idx===currentPlayer && timeLeft<=20 ? 'timer warn' : 'timer';
+    const timerText = idx===currentPlayer ? formatTime(timeLeft) : '02:00';
+    const activeLabel = idx===currentPlayer ? 'NA POTEZI' : 'ČAKA';
+    div.innerHTML=`<div class="name-line"><strong>${activeLabel}: ${p.name}</strong><span class="${timerClass}">${timerText}</span></div><div class="big">${p.score}</div><div class="compact">Koraki proti koncu: ${p.forfeitStreak}/3</div>${idx===currentPlayer && lastMoveMessage ? `<div class="hint">${lastMoveMessage}</div>` : ''}`;
+    scoresEl.appendChild(div);
+  });
+}
+
 function renderHistory(){historyEl.innerHTML='';if(!history.length){historyEl.innerHTML='<div class="history-item muted">Še ni odigranih potez.</div>';return}[...history].reverse().forEach(item=>{const div=document.createElement('div');div.className='history-item';div.textContent=item;historyEl.appendChild(div)})}
 function renderRack(){const rack=players[currentPlayer].rack;rackEl.innerHTML='';for(let i=0;i<7;i++){const slot=document.createElement('div');slot.className='rack-slot';const tile=rack[i];if(tile){const tileEl=createTileElement(tile,i===selectedRackIndex);tileEl.addEventListener('click',()=>{if(gameOver)return;selectedRackIndex=selectedRackIndex===i?null:i;renderRack()});slot.appendChild(tileEl)}rackEl.appendChild(slot)}}
 function createTileElement(tile,selected=false){const div=document.createElement('div');div.className='tile'+(selected?' selected':'')+(tile.letter==='?'?' blank':'');div.innerHTML=`${tile.displayLetter||tile.letter}<small>${tile.points}</small>`;return div}
 function renderBoard(){boardEl.innerHTML='';for(let r=0;r<SIZE;r++){for(let c=0;c<SIZE;c++){const cell=board[r][c];const div=document.createElement('div');div.className='cell';if(cell.bonus==='TW')div.classList.add('tw');if(cell.bonus==='DW')div.classList.add('dw');if(cell.bonus==='TL')div.classList.add('tl');if(cell.bonus==='DL')div.classList.add('dl');if(cell.bonus==='CENTER')div.classList.add('center');if(cell.preview)div.classList.add('preview');if(invalidPreviewCells.some(x=>x.row===r&&x.col===c))div.classList.add('invalid-preview');if(cell.tile)div.appendChild(createTileElement(cell.tile));else div.innerHTML=`<div class="bonus">${bonusLabel(cell.bonus)}</div>`;div.addEventListener('click',()=>handleBoardClick(r,c));boardEl.appendChild(div)}}}
 function bonusLabel(code){switch(code){case'TW':return'3×<br>bes.';case'DW':return'2×<br>bes.';case'TL':return'3×<br>čr.';case'DL':return'2×<br>čr.';case'CENTER':return'★';default:return''}}
-function handleBoardClick(r,c){if(gameOver)return;invalidPreviewCells=[];const cell=board[r][c];if(cell.preview)return removePlacementAt(r,c);if(cell.locked||cell.tile)return;if(selectedRackIndex===null)return setStatus('Najprej izberi črko na polici aktivnega igralca.');const rack=players[currentPlayer].rack;const tile=rack[selectedRackIndex];if(!tile)return;const placedTile={...tile};if(placedTile.letter==='?'){const chosen=prompt('Vpiši črko za prazno ploščico:','A');if(!chosen)return;placedTile.displayLetter=chosen.trim().toUpperCase().slice(0,1)||'A'}else{placedTile.displayLetter=placedTile.letter}cell.tile=placedTile;cell.preview=true;turnPlacements.push({row:r,col:c,originalTile:tile});rack.splice(selectedRackIndex,1);selectedRackIndex=null;renderAll();setStatus('Črka je postavljena. Lahko dodaš naslednjo, vrneš potezo ali jo potrdiš.')}
-function removePlacementAt(r,c){const idx=turnPlacements.findIndex(p=>p.row===r&&p.col===c);if(idx===-1)return;const placement=turnPlacements[idx];players[currentPlayer].rack.push(placement.originalTile);board[r][c].tile=null;board[r][c].preview=false;turnPlacements.splice(idx,1);invalidPreviewCells=[];renderAll();setStatus('Črka je vrnjena na polico.')}
-function recallTurn(){for(const p of [...turnPlacements]){board[p.row][p.col].tile=null;board[p.row][p.col].preview=false;players[currentPlayer].rack.push(p.originalTile)}turnPlacements=[];selectedRackIndex=null;invalidPreviewCells=[];renderAll();setStatus('Vse trenutno postavljene črke so vrnjene na polico.')}
-function swapTiles(){if(gameOver)return;if(bag.length<players[currentPlayer].rack.length)return setStatus('V vreči ni dovolj črk za menjavo vseh ploščic.');recallTurn();const returned=players[currentPlayer].rack.splice(0,players[currentPlayer].rack.length);bag=shuffle([...bag,...returned]);drawTiles(currentPlayer,7);history.push(`${players[currentPlayer].name} je zamenjal vse črke.`);endTurn(false)}
-function passTurn(){if(gameOver)return;recallTurn();history.push(`${players[currentPlayer].name} je preskočil potezo.`);passCount++;if(passCount>=2)return finishGame('Oba igralca sta zapored preskočila potezo.');endTurn(false)}
-async function checkWordsWithFran(words){
-  const res=await fetch(CHECK_ENDPOINT,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'check',words})
-  });
-  if(!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+
+function handleBoardClick(r,c){if(gameOver)return;invalidPreviewCells=[];const cell=board[r][c];if(cell.preview)return removePlacementAt(r,c);if(cell.locked||cell.tile)return;if(selectedRackIndex===null)return setStatus('Najprej izberi črko na polici aktivnega igralca.');const rack=players[currentPlayer].rack;const tile=rack[selectedRackIndex];if(!tile)return;const placedTile={...tile};if(placedTile.letter==='?'){const chosen=prompt('Vpiši črko za prazno ploščico:','A');if(!chosen)return;placedTile.displayLetter=chosen.trim().toUpperCase().slice(0,1)||'A'}else{placedTile.displayLetter=placedTile.letter}cell.tile=placedTile;cell.preview=true;turnPlacements.push({row:r,col:c,originalTile:tile});rack.splice(selectedRackIndex,1);selectedRackIndex=null;renderAll();setStatus(`Na potezi je ${players[currentPlayer].name}. Črka je postavljena.`)}
+function removePlacementAt(r,c){const idx=turnPlacements.findIndex(p=>p.row===r&&p.col===c);if(idx===-1)return;const placement=turnPlacements[idx];players[currentPlayer].rack.push(placement.originalTile);board[r][c].tile=null;board[r][c].preview=false;turnPlacements.splice(idx,1);invalidPreviewCells=[];renderAll();setStatus(`Na potezi je ${players[currentPlayer].name}. Črka je vrnjena.`)}
+function recallPreviewOnly(){for(const p of [...turnPlacements]){board[p.row][p.col].tile=null;board[p.row][p.col].preview=false;players[currentPlayer].rack.push(p.originalTile)}turnPlacements=[];selectedRackIndex=null;invalidPreviewCells=[]}
+
+function swapTiles(){
+  if (gameOver)return;
+  if (turnPlacements.length) return setStatus('Če želiš opustiti trenutno potezo, pritisni Preskoči.');
+  if (bag.length < players[currentPlayer].rack.length) return setStatus('V vreči ni dovolj črk za menjavo vseh ploščic.');
+  const returned = players[currentPlayer].rack.splice(0, players[currentPlayer].rack.length);
+  bag = shuffle([...bag, ...returned]);
+  drawTiles(currentPlayer, 7);
+  history.push(`${players[currentPlayer].name} je zamenjal črke.`);
+  lastMoveMessage = 'Črke zamenjane, poteza ni bila potrjena.';
+  registerStrikeAndSwitch('menjava črk');
 }
 
-async function fetchMeaningFromFran(word){
-  const res=await fetch(CHECK_ENDPOINT,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'define',word})
-  });
-  if(!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+function passTurn(){
+  if (gameOver)return;
+  recallPreviewOnly();
+  history.push(`${players[currentPlayer].name} je preskočil potezo.`);
+  lastMoveMessage = 'Zadnja poteza ni bila potrjena.';
+  registerStrikeAndSwitch('preskok');
 }
-async function confirmTurn(){
-  if(gameOver) return;
-  if(!turnPlacements.length) return setStatus('Najprej postavi vsaj eno črko.');
 
-  const validation=validateTurn();
-  if(!validation.ok) return setStatus(validation.message);
-
-  const wordsToCheck=validation.allWords.map(w=>w.word);
-  updateCheckedWordsUI(wordsToCheck);
-  checkInfoEl.innerHTML=`Preverjam v FRAN: <strong>${wordsToCheck.join(', ')}</strong> ...`;
-  checkedWordsEl.innerHTML='';
-
-  let franResult;
-  try{
-    franResult=await checkWordsWithFran(wordsToCheck);
-  }catch(error){
-    checkInfoEl.innerHTML=`<span class="bad">FRAN preverjanje ni uspelo.</span> ${escapeHtml(error.message)}`;
-    checkedWordsEl.innerHTML='';
-    setStatus('Poteza ni bila potrjena, ker preverjanje s FRAN ni uspelo.');
+function registerStrikeAndSwitch(reason){
+  players[currentPlayer].forfeitStreak += 1;
+  if (players[currentPlayer].forfeitStreak >= 4) {
+    finishGame(`${players[currentPlayer].name} izgubi, ker je dosegel 4 korake proti koncu (${reason}).`);
     return;
   }
+  switchTurn(false);
+}
 
-  const statusLines = validation.allWords.map(w => {
-    const result = franResult.results?.[normalizeWord(w.word)];
-    const ok = !!result?.exists;
-    return `${ok ? '✔' : '✖'} ${escapeHtml(w.word)}`;
-  });
-  checkedWordsEl.innerHTML = statusLines.join('<br>');
+function startTurnTimer(){
+  clearInterval(turnTimerId);
+  timeLeft = TURN_SECONDS;
+  renderScores();
+  turnTimerId = setInterval(() => {
+    if (gameOver) {
+      clearInterval(turnTimerId);
+      return;
+    }
+    timeLeft -= 1;
+    renderScores();
+    if (timeLeft <= 0) {
+      clearInterval(turnTimerId);
+      history.push(`${players[currentPlayer].name} je ostal brez časa.`);
+      lastMoveMessage = 'Čas je potekel, poteza ni bila potrjena.';
+      recallPreviewOnly();
+      registerStrikeAndSwitch('čas');
+    }
+  }, 1000);
+}
 
+function formatTime(total){const m=String(Math.floor(total/60)).padStart(2,'0');const s=String(total%60).padStart(2,'0');return `${m}:${s}`}
+async function checkWordsWithFran(words){const res=await fetch(CHECK_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'check',words})});if(!res.ok)throw new Error(`HTTP ${res.status}`);return await res.json()}
+async function fetchMeaningFromFran(word){const res=await fetch(CHECK_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'define',word})});if(!res.ok)throw new Error(`HTTP ${res.status}`);return await res.json()}
+function updateCheckedWordsUI(words){lastCheckedWords=[...new Set((words||[]).map(w=>String(w||'').trim()).filter(Boolean))];checkedWordsSelectEl.innerHTML='<option value="">Izberi prej preverjeno besedo</option>';for(const word of lastCheckedWords){const option=document.createElement('option');option.value=word;option.textContent=word;checkedWordsSelectEl.appendChild(option)}}
+function applySelectedCheckedWord(){const selected=checkedWordsSelectEl.value;if(!selected)return;meaningInputEl.value=selected;meaningInputEl.focus()}
+async function handleMeaningLookup(){const word=meaningInputEl.value.trim();if(!word){meaningResultEl.innerHTML='Najprej vpiši besedo.';return;}meaningResultEl.innerHTML=`Preverjam pomen za <strong>${escapeHtml(word)}</strong> ...`;try{const data=await fetchMeaningFromFran(word);if(!data.found){if(data.valid){meaningResultEl.innerHTML=`<div><strong>${escapeHtml(data.word||word)}</strong></div><div style="margin-top:6px;">Beseda je veljavna, pomena pa ni bilo mogoče zanesljivo izluščiti.</div><div style="margin-top:6px;"><a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a></div>`}else{meaningResultEl.innerHTML=`<span class="bad">Beseda ni potrjena v FRAN.</span> ${data.message?escapeHtml(data.message):''}`;}return;}const parts=[];parts.push(`<div><strong>${escapeHtml(data.word||word)}</strong></div>`);if(data.meaning){parts.push(`<div style="margin-top:6px;">${escapeHtml(data.meaning)}</div>`)}if(data.lookupUrl){parts.push(`<div style="margin-top:6px;"><a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a></div>`)}meaningResultEl.innerHTML=parts.join('');}catch(error){meaningResultEl.innerHTML=`<span class="bad">Preverjanje pomena ni uspelo.</span> ${escapeHtml(error.message)}`;}}
+
+async function confirmTurn(){
+  if(gameOver) return;
+  if(!turnPlacements.length) return setStatus(`Na potezi je ${players[currentPlayer].name}. Najprej postavi vsaj eno črko.`);
+  const validation=validateTurn();
+  if(!validation.ok) return setStatus(validation.message);
+  const wordsToCheck=validation.allWords.map(w=>w.word);
+  updateCheckedWordsUI(wordsToCheck);
+  checkInfoEl.innerHTML=`Preverjam: <strong>${wordsToCheck.join(', ')}</strong> ...`;
+  checkedWordsEl.innerHTML='';
+  let franResult;
+  try{franResult=await checkWordsWithFran(wordsToCheck)}
+  catch(error){
+    checkInfoEl.innerHTML=`<span class="bad">Preverjanje ni uspelo.</span> ${escapeHtml(error.message)}`;
+    checkedWordsEl.innerHTML='';
+    setStatus(`Na potezi je ${players[currentPlayer].name}. Preverjanje ni uspelo.`);
+    return;
+  }
+  const statusLines=validation.allWords.map(w=>{const result=franResult.results?.[normalizeWord(w.word)];const ok=!!result?.exists;return `${ok?'✔':'✖'} ${escapeHtml(w.word)}`;});
+  checkedWordsEl.innerHTML=statusLines.join('<br>');
   const invalidWords=validation.allWords.filter(w=>!franResult.results?.[normalizeWord(w.word)]?.exists);
-
   if(invalidWords.length){
     invalidPreviewCells=invalidWords.flatMap(x=>x.cells);
     renderAll();
-    checkInfoEl.innerHTML='<span class="bad">FRAN ni potrdil vseh besed.</span>';
-    setStatus(`Te besede niso potrjene v FRAN: ${invalidWords.map(x=>x.word).join(', ')}.`);
+    checkInfoEl.innerHTML='<span class="bad">Nekatere besede niso potrjene.</span>';
+    setStatus(`Te besede niso potrjene: ${invalidWords.map(x=>x.word).join(', ')}.`);
     return;
   }
-
   invalidPreviewCells=[];
-  checkInfoEl.innerHTML='<span class="ok">FRAN je potrdil vse nove besede.</span>';
-
+  checkInfoEl.innerHTML='<span class="ok">Vse besede so potrjene.</span>';
   const points=calculateTurnScore(validation.mainWordCells,validation.crossWords);
   players[currentPlayer].score+=points;
-
-  turnPlacements.forEach(p=>{
-    board[p.row][p.col].locked=true;
-    board[p.row][p.col].preview=false
-  });
-
+  turnPlacements.forEach(p=>{board[p.row][p.col].locked=true;board[p.row][p.col].preview=false});
   const mainWord=wordFromCells(validation.mainWordCells);
   let historyText=`${players[currentPlayer].name} je odigral "${mainWord}" za ${points} točk`;
   if(turnPlacements.length===7) historyText+=' in dosegel bonus 50 točk';
   history.push(historyText+'.');
-
+  lastMoveMessage = `Zadnja potrjena poteza: ${mainWord} (${points} točk)`;
   turnPlacements=[];
   drawTiles(currentPlayer,7);
-  passCount=0;
-
-  if(players[currentPlayer].rack.length===0&&bag.length===0) return finishGame(`${players[currentPlayer].name} je porabil vse črke.`);
-  endTurn(true);
+  if(isLettersFinished()){
+    finishGame('Vse črke so porabljene. Zmagovalec je določen po točkah.');
+    return;
+  }
+  switchTurn(true);
 }
-function validateTurn() {
-  const placements = [...turnPlacements].sort((a, b) => a.row - b.row || a.col - b.col);
-  const rows = [...new Set(placements.map(p => p.row))];
-  const cols = [...new Set(placements.map(p => p.col))];
 
-  let orientation = null;
-  if (rows.length === 1) orientation = 'H';
-  else if (cols.length === 1) orientation = 'V';
-  else return { ok: false, message: 'Vse novo postavljene črke morajo biti v isti vrstici ali stolpcu.' };
-
-  if (placements.length > 1) {
-    if (orientation === 'H') {
-      const row = rows[0];
-      const min = Math.min(...placements.map(p => p.col));
-      const max = Math.max(...placements.map(p => p.col));
-      for (let c = min; c <= max; c++) {
-        if (!board[row][c].tile) {
-          return { ok: false, message: 'Med novo postavljenimi črkami ne sme biti praznine.' };
-        }
-      }
-    } else {
-      const col = cols[0];
-      const min = Math.min(...placements.map(p => p.row));
-      const max = Math.max(...placements.map(p => p.row));
-      for (let r = min; r <= max; r++) {
-        if (!board[r][col].tile) {
-          return { ok: false, message: 'Med novo postavljenimi črkami ne sme biti praznine.' };
-        }
-      }
-    }
-  }
-
-  const lockedTiles = board.flat().filter(c => c.locked).length;
-
-  if (lockedTiles === 0 && !placements.some(p => p.row === CENTER && p.col === CENTER)) {
-    return { ok: false, message: 'Prva beseda mora prekriti sredinsko polje.' };
-  }
-
-  const touchesExisting = placements.some(p =>
-    getNeighbors(p.row, p.col).some(n => board[n.row][n.col].locked)
-  );
-
-  if (lockedTiles > 0 && !touchesExisting) {
-    return { ok: false, message: 'Nova beseda se mora dotikati že odigranih črk.' };
-  }
-
-  const scanTargets = new Set();
-  for (const p of placements) {
-    scanTargets.add(`H:${p.row}`);
-    scanTargets.add(`V:${p.col}`);
-  }
-
-  const allWords = [];
-  const seenKeys = new Set();
-
-  for (const target of scanTargets) {
-    const [axis, rawIndex] = target.split(':');
-    const index = Number(rawIndex);
-    const lineWords = scanLineWords(index, axis);
-
-    for (const wordObj of lineWords) {
-      const touchesNew = wordObj.cells.some(cell => board[cell.row][cell.col].preview);
-      if (!touchesNew) continue;
-
-      const key = wordObj.cells.map(c => `${c.row},${c.col}`).join('|');
-      if (seenKeys.has(key)) continue;
-
-      seenKeys.add(key);
-      allWords.push(wordObj);
-    }
-  }
-
-  if (!allWords.length) {
-    return { ok: false, message: 'Poteza mora tvoriti vsaj eno besedo z dvema črkama.' };
-  }
-
-  let mainWordObj = null;
-
-  if (orientation === 'H') {
-    mainWordObj =
-      allWords
-        .filter(w => w.direction === 'H')
-        .sort((a, b) => b.cells.length - a.cells.length)[0] || null;
-  } else {
-    mainWordObj =
-      allWords
-        .filter(w => w.direction === 'V')
-        .sort((a, b) => b.cells.length - a.cells.length)[0] || null;
-  }
-
-  if (!mainWordObj) {
-    mainWordObj = allWords[0];
-  }
-
-  const mainKey = mainWordObj.cells.map(c => `${c.row},${c.col}`).join('|');
-  const mainWordCells = mainWordObj.cells.map(c => board[c.row][c.col]);
-
-  const crossWords = allWords
-    .filter(w => w.cells.map(c => `${c.row},${c.col}`).join('|') !== mainKey)
-    .map(w => w.cells.map(c => board[c.row][c.col]));
-
-  return {
-    ok: true,
-    mainWordCells,
-    crossWords,
-    allWords
-  };
-}
-function scanLineWords(index, direction) {
-  const words = [];
-  let current = [];
-
-  for (let step = 0; step < SIZE; step++) {
-    const row = direction === 'H' ? index : step;
-    const col = direction === 'H' ? step : index;
-    const cell = board[row][col];
-
-    if (cell.tile) {
-      current.push({
-        row,
-        col,
-        tile: cell.tile
-      });
-    } else {
-      if (current.length > 1) {
-        words.push({
-          word: current.map(c => c.tile.displayLetter || c.tile.letter).join(''),
-          cells: current.map(c => ({ row: c.row, col: c.col })),
-          direction
-        });
-      }
-      current = [];
-    }
-  }
-
-  if (current.length > 1) {
-    words.push({
-      word: current.map(c => c.tile.displayLetter || c.tile.letter).join(''),
-      cells: current.map(c => ({ row: c.row, col: c.col })),
-      direction
-    });
-  }
-
-  return words;
-}
-function collectWord(row,col,orientation){const cells=[];if(orientation==='H'){let c=col;while(c>0&&board[row][c-1].tile)c--;while(c<SIZE&&board[row][c].tile)cells.push(board[row][c++])}else{let r=row;while(r>0&&board[r-1][col].tile)r--;while(r<SIZE&&board[r][col].tile)cells.push(board[r++][col])}return cells}
+function isLettersFinished(){return bag.length===0&&(players[0].rack.length===0||players[1].rack.length===0)}
+function validateTurn(){const placements=[...turnPlacements].sort((a,b)=>a.row-b.row||a.col-b.col);const rows=[...new Set(placements.map(p=>p.row))],cols=[...new Set(placements.map(p=>p.col))];let orientation=null;if(rows.length===1)orientation='H';else if(cols.length===1)orientation='V';else return{ok:false,message:'Vse novo postavljene črke morajo biti v isti vrstici ali stolpcu.'};if(placements.length>1){if(orientation==='H'){const row=rows[0],min=Math.min(...placements.map(p=>p.col)),max=Math.max(...placements.map(p=>p.col));for(let c=min;c<=max;c++)if(!board[row][c].tile)return{ok:false,message:'Med novo postavljenimi črkami ne sme biti praznine.'}}else{const col=cols[0],min=Math.min(...placements.map(p=>p.row)),max=Math.max(...placements.map(p=>p.row));for(let r=min;r<=max;r++)if(!board[r][col].tile)return{ok:false,message:'Med novo postavljenimi črkami ne sme biti praznine.'}}}const lockedTiles=board.flat().filter(c=>c.locked).length;if(lockedTiles===0&&!placements.some(p=>p.row===CENTER&&p.col===CENTER))return{ok:false,message:'Prva beseda mora prekriti sredinsko polje.'};const touchesExisting=placements.some(p=>getNeighbors(p.row,p.col).some(n=>board[n.row][n.col].locked));if(lockedTiles>0&&!touchesExisting)return{ok:false,message:'Nova beseda se mora dotikati že odigranih črk.'};const scanTargets=new Set();for(const p of placements){scanTargets.add(`H:${p.row}`);scanTargets.add(`V:${p.col}`)}const allWords=[];const seenKeys=new Set();for(const target of scanTargets){const [axis,rawIndex]=target.split(':');const index=Number(rawIndex);const lineWords=scanLineWords(index,axis);for(const wordObj of lineWords){const touchesNew=wordObj.cells.some(cell=>board[cell.row][cell.col].preview);if(!touchesNew)continue;const key=wordObj.cells.map(c=>`${c.row},${c.col}`).join('|');if(seenKeys.has(key))continue;seenKeys.add(key);allWords.push(wordObj)}}if(!allWords.length)return{ok:false,message:'Poteza mora tvoriti vsaj eno besedo z dvema črkama.'};let mainWordObj=null;if(orientation==='H')mainWordObj=allWords.filter(w=>w.direction==='H').sort((a,b)=>b.cells.length-a.cells.length)[0]||null;else mainWordObj=allWords.filter(w=>w.direction==='V').sort((a,b)=>b.cells.length-a.cells.length)[0]||null;if(!mainWordObj)mainWordObj=allWords[0];const mainKey=mainWordObj.cells.map(c=>`${c.row},${c.col}`).join('|');const mainWordCells=mainWordObj.cells.map(c=>board[c.row][c.col]);const crossWords=allWords.filter(w=>w.cells.map(c=>`${c.row},${c.col}`).join('|')!==mainKey).map(w=>w.cells.map(c=>board[c.row][c.col]));return{ok:true,mainWordCells,crossWords,allWords}}
+function scanLineWords(index,direction){const words=[];let current=[];for(let step=0;step<SIZE;step++){const row=direction==='H'?index:step;const col=direction==='H'?step:index;const cell=board[row][col];if(cell.tile){current.push({row,col,tile:cell.tile})}else{if(current.length>1)words.push({word:current.map(c=>c.tile.displayLetter||c.tile.letter).join(''),cells:current.map(c=>({row:c.row,col:c.col})),direction});current=[]}}if(current.length>1)words.push({word:current.map(c=>c.tile.displayLetter||c.tile.letter).join(''),cells:current.map(c=>({row:c.row,col:c.col})),direction});return words}
 function getNeighbors(row,col){return[row>0?{row:row-1,col}:null,row<SIZE-1?{row:row+1,col}:null,col>0?{row,col:col-1}:null,col<SIZE-1?{row,col:col+1}:null].filter(Boolean)}
 function calculateTurnScore(mainWordCells,crossWords){let total=scoreWord(mainWordCells);crossWords.forEach(word=>total+=scoreWord(word));if(turnPlacements.length===7)total+=50;return total}
 function scoreWord(cells){let sum=0,wordMultiplier=1;cells.forEach(cell=>{let letterPoints=cell.tile.points;const isNew=cell.preview;if(isNew){if(cell.bonus==='DL')letterPoints*=2;if(cell.bonus==='TL')letterPoints*=3;if(cell.bonus==='DW'||cell.bonus==='CENTER')wordMultiplier*=2;if(cell.bonus==='TW')wordMultiplier*=3}sum+=letterPoints});return sum*wordMultiplier}
 function wordFromCells(cells){return cells.map(c=>c.tile.displayLetter||c.tile.letter).join('')}
 function normalizeWord(value){return String(value||'').trim().toLocaleLowerCase('sl').normalize('NFC')}
-function endTurn(afterPlay){selectedRackIndex=null;currentPlayer=currentPlayer===0?1:0;renderAll();setStatus(afterPlay?`Poteza je potrjena. Na potezi je ${players[currentPlayer].name}.`:`Na potezi je ${players[currentPlayer].name}.`)}
-function finishGame(reason){gameOver=true;players.forEach(p=>p.score-=p.rack.reduce((acc,t)=>acc+t.points,0));let winnerText='Igra se je končala neodločeno.';if(players[0].score>players[1].score)winnerText='Zmagal je Igralec 1.';if(players[1].score>players[0].score)winnerText='Zmagal je Igralec 2.';history.push(`Konec igre. ${reason} ${winnerText}`);renderAll();setStatus(`Konec igre. ${reason} ${winnerText}`)}
-function setStatus(text){statusEl.textContent=`${text} V vreči je še ${bag.length} črk.`}
-function escapeHtml(value){return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;")}
-
-function updateCheckedWordsUI(words){
-  lastCheckedWords = [...new Set((words || []).map(w => String(w || '').trim()).filter(Boolean))];
-
-  checkedWordsSelectEl.innerHTML = '<option value="">Izberi prej preverjeno besedo</option>';
-  for(const word of lastCheckedWords){
-    const option = document.createElement('option');
-    option.value = word;
-    option.textContent = word;
-    checkedWordsSelectEl.appendChild(option);
-  }
-}
-
-function applySelectedCheckedWord(){
-  const selected = checkedWordsSelectEl.value;
-  if(!selected) return;
-  meaningInputEl.value = selected;
-  meaningInputEl.focus();
-}
-
-async function handleMeaningLookup(){
-  const word = meaningInputEl.value.trim();
-  if(!word){
-    meaningResultEl.innerHTML = 'Najprej vpiši besedo.';
-    return;
-  }
-
-  meaningResultEl.innerHTML = `Preverjam pomen za <strong>${escapeHtml(word)}</strong> ...`;
-
-  try{
-    const data = await fetchMeaningFromFran(word);
-
-    if(data.exists && !data.definitionFound){
-      meaningResultEl.innerHTML =
-        `<div><strong>${escapeHtml(data.word || word)}</strong></div>` +
-        `<div style="margin-top:6px;"><span class="ok">Beseda je veljavna.</span> ` +
-        `${data.message ? escapeHtml(data.message) : 'Pomen ni bil zanesljivo izluščen.'}</div>` +
-        `${data.lookupUrl ? `<div style="margin-top:6px;"><a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a></div>` : ''}`;
-      return;
-    }
-
-    if(!data.found){
-      meaningResultEl.innerHTML =
-        `<span class="bad">Beseda ni potrjena v FRAN.</span> ` +
-        `${data.message ? escapeHtml(data.message) : ''}` +
-        `${data.lookupUrl ? ` <a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a>` : ''}`;
-      return;
-    }
-
-    const parts = [];
-    parts.push(`<div><strong>${escapeHtml(data.word || word)}</strong></div>`);
-    if(data.meaning){
-      parts.push(`<div style="margin-top:6px;">${escapeHtml(data.meaning)}</div>`);
-    }
-    if(data.lookupUrl){
-      parts.push(`<div style="margin-top:6px;"><a href="${data.lookupUrl}" target="_blank" rel="noopener noreferrer">Odpri v FRAN</a></div>`);
-    }
-    meaningResultEl.innerHTML = parts.join('');
-  }catch(error){
-    meaningResultEl.innerHTML = `<span class="bad">Preverjanje pomena ni uspelo.</span> ${escapeHtml(error.message)}`;
-  }
-}
+function switchTurn(afterPlay){currentPlayer=currentPlayer===0?1:0;selectedRackIndex=null;renderAll();startTurnTimer();setStatus(`Na potezi je ${players[currentPlayer].name}.`)}
+function finishGame(reason){gameOver=true;clearInterval(turnTimerId);players.forEach(p=>p.score-=p.rack.reduce((acc,t)=>acc+t.points,0));let winnerText='Igra se je končala neodločeno.';if(players[0].score>players[1].score)winnerText='Zmagal je Igralec 1.';if(players[1].score>players[0].score)winnerText='Zmagal je Igralec 2.';history.push(`Konec igre. ${reason} ${winnerText}`);renderAll();setStatus(`Konec igre. ${reason} ${winnerText}`)}
+function escapeHtml(value){return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
+function setStatus(text){const playerName=players[currentPlayer]?.name||'';const suffix=gameOver?'':`<span class="hint">Preostale črke: ${bag.length}</span>`;statusEl.innerHTML=`<strong>${playerName}</strong>${gameOver?'':' je na potezi. '} ${escapeHtml(text)} ${suffix}`;}
 
 document.getElementById('playBtn').addEventListener('click',confirmTurn);
-document.getElementById('recallBtn').addEventListener('click',recallTurn);
 document.getElementById('swapBtn').addEventListener('click',swapTiles);
 document.getElementById('passBtn').addEventListener('click',passTurn);
 meaningBtnEl.addEventListener('click',handleMeaningLookup);
 useCheckedWordBtnEl.addEventListener('click',applySelectedCheckedWord);
 checkedWordsSelectEl.addEventListener('change',applySelectedCheckedWord);
 meaningInputEl.addEventListener('keydown',e=>{if(e.key==='Enter') handleMeaningLookup();});
+
 initGame();
 </script>
 </body>
